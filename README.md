@@ -1,35 +1,40 @@
 # Adaa | أداء
 ### Making Employee Contributions More Visible
 
-Adaa is an AI-assisted employee performance insights platform developed as an **MVP during the Tuwaiq Hackathon**.
+Adaa explores how digital work activity can provide a clearer picture of employee contributions and support more informed performance discussions.
+
+Developed as an MVP during **Tuwaiq Hackathon**.
 
 ## The Problem
 
-Traditional employee evaluations often rely on predefined targets or subjective managerial assessments. Both approaches can overlook actual contributions and the effort behind everyday work.
+Employee performance evaluations often rely on predefined goals or subjective assessments. However, these methods may not capture the full picture of an employee's daily contributions, especially in increasingly digital work environments.
 
-As workplaces increasingly rely on digital tools and AI, the way employees work is changing, while traditional evaluation methods do not always capture these changes.
+This raises a question:
 
-This creates a gap between the work employees actually do and how their performance is evaluated.
+**How can everyday digital work provide additional context for understanding employee contributions?**
 
-## The Idea
+## The Approach
 
-We started with a question:
+Adaa explores the use of selected digital activity indicators to make parts of an employee's daily work more visible.
 
-**What if everyday work activity could provide additional context for more objective employee performance evaluations?**
+Rather than replacing human judgment, the platform aims to provide additional information that supervisors can consider during performance discussions.
 
-This led to Adaa: a platform that organizes selected digital work activity into structured information and uses AI to generate insights that can support better-informed performance discussions.
+## The Prototype
 
-Adaa is designed to complement human judgment, not replace it.
+The MVP currently includes:
 
-## Key Features
+- **Activity Tracking:** Tracks selected work activity in Microsoft Excel on macOS.
+- **Data Analysis:** Processes task-related metadata and activity indicators.
+- **AI-Assisted Insights:** Uses Gemini API to generate summaries from collected data.
+- **Dashboard:** Presents activity indicators and generated insights.
+- **Activity History:** Stores historical records locally.
 
-- **Live Activity Tracking:** Monitors selected application activity and Excel workbook metadata on macOS.
-- **Task Analysis:** Organizes activity into task records and progress indicators.
-- **AI Insights:** Uses Google Gemini to generate summaries from selected task metadata.
-- **Productivity Dashboard:** Visualizes daily activity, completed tasks, and productivity indicators.
-- **Historical Records:** Maintains locally stored records for historical comparisons.
+## How It Works
 
-## Platform Preview
+`Activity Tracking → Data Processing → AI Analysis → Dashboard`
+
+## Screenshots
+
 
 ![Adaa Platform Interface](docs/images/adaa-platform-interface.png)
 
@@ -38,31 +43,45 @@ Adaa is designed to complement human judgment, not replace it.
 
 ## Technology Stack
 
-Python · FastAPI · OpenPyXL · Google Gemini API · AppleScript · HTML · CSS · JavaScript
+Python · FastAPI · Gemini API · AppleScript · JavaScript · HTML/CSS · JSON
 
-## Privacy Considerations
+## Getting Started
 
-Privacy was considered during the initial design:
+**Requirements:** macOS, Python 3.10+, Microsoft Excel, and a Gemini API key.
 
-- No screenshot capture or keystroke logging.
-- Local activity tracking and dashboard hosting.
-- Excel monitoring focuses on metadata rather than intentionally collecting cell contents.
+```bash
+git clone https://github.com/areenaAlmeshaly/Adaa-Platform.git
+cd Adaa-Platform
 
-However, selected metadata is sent to Google Gemini API for analysis, and local JSON records are not encrypted. The current MVP does not provide comprehensive anonymization or access controls.
+python3 -m venv .venv
+source .venv/bin/activate
 
-## Future Development
+pip install -r requirements.txt
+```
 
-The hackathon version demonstrates the initial concept. Future development will focus on:
+Create a `.env` file and add your Gemini API key:
 
-- Stronger data protection through encryption and access controls.
-- More on-device processing to minimize external data sharing.
-- Configurable data collection and AI-sharing permissions.
-- Employee transparency, consent, and data deletion controls.
-- Validating productivity indicators to ensure they reflect meaningful contributions.
-- Supporting additional applications and workflows.
+```env
+GEMINI_API_KEY=your_api_key_here
+```
 
-## Development
+Start the application:
 
-Developed during the **Tuwaiq Hackathon** using a **Vibe Coding** approach, with AI-assisted development supporting the implementation of the prototype.
+```bash
+python start.py
+```
 
-Adaa is an initial exploration of how technology can help organizations better understand employee contributions and make performance discussions more informed.
+Open `http://127.0.0.1:8000` in your browser.
+
+## Privacy & Limitations
+
+Adaa does not capture screenshots or keystrokes. Activity tracking and dashboard data are handled locally, while selected metadata is sent to the Gemini API for analysis.
+
+The current MVP does not include comprehensive anonymization, encryption, or access controls. Activity indicators should not be interpreted as definitive measures of productivity or performance. Some dashboard views use sample data.
+
+## Project Status
+
+Adaa is an early-stage prototype developed during Tuwaiq Hackathon using AI-assisted development. Its indicators, assumptions, and real-world usefulness require further testing and validation.
+
+
+
