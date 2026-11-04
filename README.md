@@ -31,9 +31,10 @@ Adaa is designed to complement human judgment, not replace it.
 
 ## Platform Preview
 
+![Adaa Platform Interface](docs/images/adaa-platform-interface.png)
+
 ![Adaa Platform Overview](docs/images/adaa-platform-overview.png)
 
-![Adaa Platform Interface](docs/images/adaa-platform-interface.png)
 
 ## Technology Stack
 
