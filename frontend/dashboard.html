@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>منصة أداء</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#050505;--bg2:#0a0a0a;--bg3:#111111;
+  --border:#1c1c1c;--border2:#2a2a2a;
+  --text:#f5f5f2;--text2:#a3a3a0;--text3:#6b6b69;
+  --acc:#f5f5f2;--acc-bg:rgba(245,245,242,.05);--acc-border:rgba(245,245,242,.16);
+  --green:#4ade80;--green-bg:rgba(74,222,128,.08);--green-border:rgba(74,222,128,.28);
+  --orange:#e3b341;--orange-bg:rgba(227,179,65,.08);--orange-border:rgba(227,179,65,.28);
+  --purple:#a3a3a0;--purple-bg:rgba(245,245,242,.05);--purple-border:rgba(245,245,242,.16);
+  --yellow:#e3b341;--yellow-bg:rgba(227,179,65,.08);
+  --red:#f87171;--red-bg:rgba(248,113,113,.08);
+  --btn-bg:#f2f2ee;--btn-fg:#0a0a0a;
+  --r-sm:6px;--r-md:8px;--r-lg:14px;--r-pill:999px;
+  --hh:60px;--sw:220px;
+}
+body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow:hidden;font-size:13px;line-height:1.7;-webkit-font-smoothing:antialiased}
+:focus-visible{outline:2px solid var(--text);outline-offset:2px}
+
+/* HEADER */
+.header{position:fixed;top:0;right:0;left:0;height:var(--hh);background:var(--bg);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 28px;z-index:200}
+.h-left{display:flex;align-items:center;gap:12px}
+.h-emblem{width:28px;height:28px;font-size:0;display:flex;align-items:center;justify-content:center}
+.h-emblem::after{content:"";width:12px;height:12px;border:2px solid var(--text);border-radius:3px}
+.h-name{font-size:12px;font-weight:700;color:var(--text);line-height:1.2}
+.h-sub{font-size:11px;color:var(--text3);font-family:'JetBrains Mono',monospace;letter-spacing:.08em}
+.h-right{display:flex;align-items:center;gap:16px}
+.h-date{font-size:12px;color:var(--text3)}
+.h-user{display:flex;align-items:center;gap:10px;padding:5px 12px;background:transparent;border:1px solid var(--border2);border-radius:var(--r-md)}
+.h-av{width:24px;height:24px;border-radius:50%;background:var(--bg3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--text)}
+.h-uname{font-size:12px;font-weight:600;color:var(--text);line-height:1.3}
+.h-urole{font-size:10px;color:var(--text3);line-height:1.3}
+
+/* LAYOUT */
+.app{display:flex;height:100vh;padding-top:var(--hh)}
+
+/* SIDEBAR */
+.sidebar{width:var(--sw);background:var(--bg);border-left:1px solid var(--border);display:flex;flex-direction:column;position:fixed;right:0;top:var(--hh);bottom:0;z-index:100}
+.sid-top{padding:16px 20px;border-bottom:1px solid var(--border)}
+.sid-clock{padding:14px 20px;border-bottom:1px solid var(--border)}
+.sid-time{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:600;color:var(--text)}
+.sid-date{font-size:11px;color:var(--text3);margin-top:2px}
+.sid-nav{padding:8px 0;flex:1;overflow-y:auto}
+.nav-section{padding:16px 20px 6px;font-size:11px;font-weight:600;color:var(--text3)}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 14px;margin:2px 10px;border-radius:var(--r-md);cursor:pointer;transition:background .15s,color .15s;color:var(--text2);font-size:13px;font-weight:500;border:1px solid transparent}
+.nav-item:hover{background:var(--bg3);color:var(--text)}
+.nav-item.active{background:var(--bg3);border-color:var(--border2);color:var(--text)}
+.nav-item.track-nav{color:var(--text2)}
+.nav-item.track-nav:hover{background:var(--bg3);color:var(--text)}
+.nav-item.track-nav.active{background:var(--bg3);border-color:var(--border2);color:var(--text)}
+.nav-ico{display:none}
+.track-nav .nav-ico{display:inline-flex;align-items:center}
+.sid-foot{padding:14px 20px;border-top:1px solid var(--border)}
+.ref-bar{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--text3);margin-bottom:6px}
+.ref-track{flex:1;height:1px;background:var(--border2);overflow:hidden}
+.ref-prog{height:100%;background:var(--text2);animation:refill 30s linear infinite}
+@keyframes refill{from{width:100%}to{width:0%}}
+.sys-ver{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text3)}
+.ldot{width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0}
+
+/* MAIN */
+.main{margin-right:var(--sw);flex:1;display:flex;flex-direction:column;height:100%;overflow:hidden}
+.topbar{background:var(--bg);border-bottom:1px solid var(--border);height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;flex-shrink:0}
+.tb-crumb{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text3);margin-bottom:2px}
+.crumb-sep{color:var(--border2)}.crumb-act{color:var(--text);font-weight:500}
+.tb-title{font-size:16px;font-weight:600;color:var(--text)}
+.tb-right{display:flex;align-items:center;gap:10px}
+.upd-chip{display:flex;align-items:center;gap:6px;background:transparent;border:1px solid var(--border);border-radius:var(--r-md);padding:6px 12px;font-size:11px;color:var(--text2)}
+.btn-exp{display:flex;align-items:center;gap:6px;padding:7px 14px;background:transparent;color:var(--text);border-radius:var(--r-md);font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border2);transition:background .15s,color .15s}
+.btn-exp:hover{background:var(--btn-bg);color:var(--btn-fg);border-color:var(--btn-bg)}
+.content{padding:28px;flex:1;overflow-y:auto}
+
+/* PAGES */
+.page{display:none}.page.active{display:block}
+
+/* EMP GRID */
+.emp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.emp-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-lg);padding:22px;cursor:pointer;transition:border-color .15s,background .15s}
+.emp-card:hover{border-color:var(--border2);background:var(--bg3)}
+.ec-av,.eb-av,.trk-av{background:var(--bg3)!important;border:1px solid var(--border2);color:var(--text)!important}
+.ec-av{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:600;margin-bottom:14px}
+.ec-name{font-size:15px;font-weight:600;color:var(--text);margin-bottom:2px}
+.ec-role{font-size:12px;color:var(--text2);margin-bottom:2px}
+.ec-dept{font-size:12px;color:var(--text3);margin-bottom:16px;line-height:1.5}
+.ec-foot{display:flex;align-items:center;justify-content:space-between;padding-top:14px;border-top:1px solid var(--border)}
+.btn-view{padding:6px 12px;background:var(--btn-bg);border:0;color:var(--btn-fg);border-radius:var(--r-sm);font-size:11px;font-weight:600}
+
+/* DASHBOARD */
+.back-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:transparent;border:1px solid var(--border2);border-radius:var(--r-md);color:var(--text);font-size:12px;font-weight:600;cursor:pointer;margin-bottom:18px;transition:background .15s,color .15s}
+.back-btn:hover{background:var(--btn-bg);color:var(--btn-fg);border-color:var(--btn-bg)}
+.emp-banner{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px 24px;margin-bottom:16px;display:flex;align-items:center;gap:16px}
+.eb-av{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:600;flex-shrink:0}
+.eb-name{font-size:17px;font-weight:600;color:var(--text);margin-bottom:2px}
+.eb-dept{font-size:12px;color:var(--text2)}
+.eb-kpis{display:flex;background:transparent;border:1px solid var(--border2);border-radius:var(--r-md);overflow:hidden;margin-right:auto}
+.eb-kpi{padding:10px 20px;text-align:center;border-left:1px solid var(--border2)}
+.eb-kpi:last-child{border-left:none}
+.eb-kv{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:600;margin-bottom:1px}
+.eb-kl{font-size:11px;color:var(--text3);font-weight:500}
+
+/* TABS */
+.tab-nav{display:flex;border-bottom:1px solid var(--border);margin-bottom:18px}
+.tab-btn{padding:10px 20px;font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .15s}
+.tab-btn:hover{color:var(--text)}.tab-btn.active{color:var(--text);border-bottom-color:var(--text)}
+
+/* KPIs */
+.kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:16px}
+.kpi{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-lg);padding:18px 20px}
+.kpi-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.kpi-lbl{font-size:12px;font-weight:500;color:var(--text3)}
+.kpi-ico{display:none}
+.kpi-val{font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:600;color:var(--text);margin-bottom:4px;line-height:1.1}
+.kpi-sub{font-size:12px;color:var(--text3)}
+.kpi-bar{height:2px;background:var(--border2);border-radius:100px;overflow:hidden;margin-top:14px}
+.kpi-bf{height:100%;border-radius:100px;transition:width 1.2s ease}
+
+/* GRIDS */
+.g2{display:grid;grid-template-columns:1.7fr 1fr;gap:14px;margin-bottom:14px}
+.g2b{display:grid;grid-template-columns:1.4fr 1fr;gap:14px;margin-bottom:14px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px}
+
+/* CARD */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-lg);margin-bottom:14px}
+.card:last-child{margin-bottom:0}
+.card-h{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border)}
+.card-t{font-size:14px;font-weight:600;color:var(--text)}.card-s{font-size:11px;color:var(--text3);margin-top:1px}
+.card-b{padding:16px 20px}
+
+/* CHIPS */
+.chip{display:inline-flex;align-items:center;padding:2px 10px;border-radius:var(--r-pill);font-size:11px!important;font-weight:600;border:1px solid}
+.cg{background:var(--green-bg);color:var(--green);border-color:var(--green-border)}
+.cb{background:var(--acc-bg);color:var(--text);border-color:var(--acc-border)}
+.cy{background:var(--yellow-bg);color:var(--yellow);border-color:rgba(227,179,65,.28)}
+.cp{background:transparent;color:var(--text2);border-color:var(--border2)}
+.cn{background:transparent;color:var(--text2);border-color:var(--border2)}
+.co{background:var(--orange-bg);color:var(--orange);border-color:var(--orange-border)}
+
+/* STATUS BADGE (جاري / منجز) */
+.status-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 10px;border-radius:var(--r-pill);font-size:11px;font-weight:600;border:1px solid;flex-shrink:0;white-space:nowrap}
+.status-done{background:var(--green-bg);color:var(--green);border-color:var(--green-border)}
+.status-active{background:var(--orange-bg);color:var(--orange);border-color:var(--orange-border)}
+
+/* TRACKING PAGE */
+.trk-banner{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px 24px;margin-bottom:16px;display:flex;align-items:center;gap:16px}
+.trk-av{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:600;flex-shrink:0;position:relative}
+.trk-av::after{content:'';position:absolute;bottom:0;left:0;width:10px;height:10px;border-radius:50%;background:var(--green);border:2px solid var(--bg2)}
+.trk-name{font-size:17px;font-weight:600;color:var(--text);margin-bottom:2px}
+.trk-role{font-size:12px;color:var(--text2)}
+.trk-kpis{display:flex;background:transparent;border:1px solid var(--border2);border-radius:var(--r-md);overflow:hidden;margin-right:auto}
+.trk-kpi{padding:10px 20px;text-align:center;border-left:1px solid var(--border2)}
+.trk-kpi:last-child{border-left:none}
+.trk-kv{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:600;margin-bottom:1px}
+.trk-kl{font-size:11px;color:var(--text3);font-weight:500}
+
+/* TASK ROWS */
+.task-row{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.task-row:last-child{border-bottom:none;padding-bottom:0}
+.tnum{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;flex-shrink:0;margin-top:1px}
+.tnum.done{background:var(--green-bg);border:1px solid var(--green-border);color:var(--green)}
+.tnum.prog{background:var(--orange-bg);border:1px solid var(--orange-border);color:var(--orange)}
+.task-b{flex:1}.task-name{font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px}
+.task-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.tm{font-size:11px;color:var(--text3)}.tsep{color:var(--border2);font-size:11px}
+.task-r{text-align:left;flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.task-time{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--text2)}
+.task-dur{font-size:11px;color:var(--text3)}
+
+/* DONUT */
+.donut-c{display:flex;flex-direction:column;align-items:center}
+.donut-w{position:relative;width:100px;height:100px}
+.donut-svg{transform:rotate(-90deg)}
+.d-bg{fill:none;stroke:var(--border2);stroke-width:6}
+.d-fill{fill:none;stroke:var(--text);stroke-width:6;stroke-linecap:butt;transition:stroke-dashoffset 1.5s ease}
+.d-in{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.d-pct{font-family:'JetBrains Mono',monospace;font-size:19px;font-weight:600;color:var(--text)}
+.d-lbl{font-size:11px;color:var(--text3)}
+.breakdown{display:flex;flex-direction:column;gap:6px;margin-top:16px;width:100%}
+.bd{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-md)}
+.bd-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.bd-lbl{font-size:12px;color:var(--text2);flex:1}
+.bd-val{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--text)}
+
+/* ALERTS */
+.alert-row{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border-radius:var(--r-md);border:1px solid;margin-bottom:8px}
+.alert-row:last-child{margin-bottom:0}
+.alert-row.warning{background:var(--yellow-bg);border-color:rgba(227,179,65,.28)}
+.alert-row.danger{background:var(--red-bg);border-color:rgba(248,113,113,.28)}
+.alert-row.success{background:var(--green-bg);border-color:var(--green-border)}
+.alert-row.info{background:var(--bg3);border-color:var(--border2)}
+.alert-ico{display:none}
+.alert-t{font-size:12px;font-weight:600;margin-bottom:2px}
+.alert-row.warning .alert-t{color:var(--yellow)}.alert-row.danger .alert-t{color:var(--red)}
+.alert-row.success .alert-t{color:var(--green)}.alert-row.info .alert-t{color:var(--text)}
+.alert-m{font-size:12px;color:var(--text2);line-height:1.5}
+
+/* ENERGY */
+.energy{display:flex;align-items:flex-end;gap:3px;height:64px}
+.en-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;height:100%;justify-content:flex-end}
+.en-bar{width:100%;border-radius:3px 3px 0 0;min-height:2px;opacity:1!important}
+.en-lbl{font-size:10px;color:var(--text3);font-family:'JetBrains Mono',monospace}
+
+/* TIMELINE */
+.tl{display:flex;flex-direction:column;max-height:210px;overflow-y:auto}
+.tl-row{display:flex;gap:10px;padding-bottom:12px}
+.tl-row:last-child{padding-bottom:0}
+.tl-l{display:flex;flex-direction:column;align-items:center;flex-shrink:0}
+.tl-dot{width:8px;height:8px;border-radius:50%;border:1px solid;flex-shrink:0;margin-top:5px}
+.tl-g{border-color:var(--green);background:var(--green)}.tl-y{border-color:var(--yellow);background:var(--yellow)}
+.tl-p{border-color:var(--text2);background:var(--text2)}.tl-n{border-color:var(--border2);background:var(--bg3)}
+.tl-line{width:1px;flex:1;background:var(--border);margin:3px 0;min-height:10px}
+.tl-b{flex:1}
+.tl-t{font-size:12px;font-weight:600;color:var(--text);margin-bottom:1px}
+.tl-s{font-size:11px;color:var(--text2)}.tl-tm{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text3);margin-top:1px}
+
+/* AI */
+.ai-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.ai-row:last-child{border-bottom:none}
+.ai-tool{font-size:12px;font-weight:600;color:var(--text);width:90px;flex-shrink:0}
+.ai-bw{flex:1;height:2px;background:var(--border2);border-radius:100px;overflow:hidden}
+.ai-bf{height:100%;border-radius:100px;transition:width 1s ease}
+.ai-min{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--text);width:36px;text-align:left;flex-shrink:0}
+
+/* MONTHLY/ANNUAL */
+.month-bars{display:flex;gap:3px;align-items:flex-end;height:80px;margin-top:10px}
+.mb{flex:1;border-radius:3px 3px 0 0;min-height:2px;cursor:pointer}
+.monthly-trend{display:flex;align-items:flex-end;gap:5px;height:90px}
+.mt-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end}
+.mt-bar{width:100%;border-radius:3px 3px 0 0;min-height:2px}
+.mt-lbl{font-size:10px;color:var(--text3)}
+.q-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:14px}
+.q-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-lg);padding:18px;text-align:center}
+.q-label{font-size:12px;font-weight:500;color:var(--text3);margin-bottom:8px}
+.q-val{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:600;margin-bottom:4px}
+.q-sub{font-size:11px;color:var(--text3)}
+.q-bar{height:2px;background:var(--border2);border-radius:100px;overflow:hidden;margin-top:12px}
+.q-bf{height:100%;border-radius:100px}
+
+.empty{text-align:center;padding:24px 10px;color:var(--text3);font-size:12px}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:100px}
+
+/* RESPONSIVE */
+@media (max-width:1100px){
+  .emp-grid{grid-template-columns:repeat(2,1fr)}
+  .g2,.g2b,.g3{grid-template-columns:1fr}
+  .q-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:760px){
+  body{overflow:auto}
+  .sidebar{display:none}
+  .main{margin-right:0}
+  .header,.topbar,.content{padding-right:16px;padding-left:16px}
+  .h-date,.h-sub{display:none}
+  .emp-grid,.kpi-row{grid-template-columns:1fr}
+  .emp-banner,.trk-banner{flex-wrap:wrap}
+  .eb-kpis,.trk-kpis{margin-right:0;width:100%;justify-content:space-around}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="h-left">
+    <div class="h-emblem">📡</div>
+    <div>
+      <div class="h-name" style="font-size:18px;font-weight:800;letter-spacing:.5px">منصة أداء</div>
+      <div class="h-sub">Performance Monitoring Platform</div>
+    </div>
+  </div>
+  <div class="h-right">
+    <div class="h-date" id="govDate">--</div>
+    <div class="h-user"><div class="h-av">م</div><div><div class="h-uname">مشرف الأداء</div><div class="h-urole">صلاحية: متابعة</div></div></div>
+  </div>
+</div>
+
+<div class="app">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sid-top">
+    <div style="display:flex;align-items:center;gap:8px">
+      <div><div style="font-size:14px;font-weight:700;color:var(--text)">منصة أداء</div><div style="font-size:11px;color:var(--text3)">متابعة الفريق</div></div>
+    </div>
+  </div>
+  <div class="sid-clock">
+    <div class="sid-time" id="clkT">--:--:--</div>
+    <div class="sid-date" id="clkD">--</div>
+  </div>
+  <nav class="sid-nav">
+    <div class="nav-section">الرئيسية</div>
+    <div class="nav-item active" id="nav-employees" onclick="showEmployees()"><span class="nav-ico">👥</span>قائمة الموظفين</div>
+    <div class="nav-item track-nav" id="nav-tracking" onclick="showTracking()"><span class="nav-ico"><div class="ldot" style="display:inline-block;margin-left:1px"></div></span>تتبّعي</div>
+
+    <div id="nav-emp-group" style="display:none">
+      <div class="nav-section" id="nav-emp-label">موظف محدد</div>
+      <div class="nav-item" id="nav-monthly" onclick="showTab('monthly')"><span class="nav-ico">📆</span>التقرير الشهري</div>
+      <div class="nav-item" id="nav-annual" onclick="showTab('annual')"><span class="nav-ico">📊</span>التقرير السنوي</div>
+    </div>
+  </nav>
+  <div class="sid-foot">
+    <div class="ref-bar"><span>تحديث تلقائي</span><div class="ref-track"><div class="ref-prog"></div></div><span id="lastUpd">--</span></div>
+    <div class="sys-ver">v3.0 | ENTERPRISE | 1446هـ</div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div>
+      <div class="tb-crumb"><span>الرئيسية</span><span class="crumb-sep">›</span><span class="crumb-act" id="crumbAct">قائمة الموظفين</span></div>
+      <div class="tb-title" id="pgTitle">لوحة متابعة الفريق</div>
+    </div>
+    <div class="tb-right">
+      <div class="upd-chip">آخر تحديث: <strong id="lastUpdTime" style="font-family:'JetBrains Mono',monospace;margin-right:3px">--</strong></div>
+      <div class="btn-exp" onclick="alert('تصدير')">تصدير</div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ====== EMPLOYEES PAGE ====== -->
+    <div class="page active" id="page-employees">
+      <div style="margin-bottom:20px">
+        <div style="font-size:20px;font-weight:600;color:var(--text);margin-bottom:4px">قائمة الموظفين</div>
+        <div style="font-size:13px;color:var(--text2)">اختر موظفاً لعرض التقرير الشهري أو السنوي</div>
+      </div>
+      <div class="emp-grid" id="empGrid"></div>
+    </div>
+
+    <!-- ====== TRACKING PAGE ====== -->
+    <div class="page" id="page-tracking">
+      <!-- banner -->
+      <div class="trk-banner">
+        <div class="trk-av">أ</div>
+        <div>
+          <div class="trk-name">أرينا المشعلي</div>
+          <div class="trk-role">محللة بيانات · قسم التخطيط الاستراتيجي</div>
+        </div>
+        <div class="trk-kpis">
+          <div class="trk-kpi"><div class="trk-kv" style="color:var(--acc)" id="trk-prod">--%</div><div class="trk-kl">إنتاجية</div></div>
+          <div class="trk-kpi"><div class="trk-kv" style="color:var(--green)" id="trk-tasks">--</div><div class="trk-kl">تاسكات</div></div>
+          <div class="trk-kpi"><div class="trk-kv" style="color:var(--text2)" id="trk-cells">--</div><div class="trk-kl">خانة</div></div>
+          <div class="trk-kpi"><div class="trk-kv" style="color:var(--purple)" id="trk-ai">--</div><div class="trk-kl">AI د</div></div>
+          <div class="trk-kpi"><div class="trk-kv" style="color:var(--text2)" id="trk-saves">--</div><div class="trk-kl">حفظ</div></div>
+        </div>
+      </div>
+
+      <!-- KPI row -->
+      <div class="kpi-row" id="trkKpis"></div>
+
+      <!-- tasks + donut -->
+      <div class="g2">
+
+        <!-- ====== بوكس المهام الموحّد ====== -->
+        <div class="card">
+          <div class="card-h">
+            <div><div class="card-t">المهام</div><div class="card-s">الجلسة اليومية</div></div>
+            <div style="display:flex;gap:5px;align-items:center">
+              <span class="status-badge status-active" id="chipActive" style="display:none">● جاري</span>
+              <span class="chip cg" id="tChip">0 منجزة</span>
+            </div>
+          </div>
+          <div class="card-b" style="padding:3px 20px"><div id="taskList"></div></div>
+        </div>
+
+        <div class="card">
+          <div class="card-h"><div><div class="card-t">توزيع الوقت</div></div></div>
+          <div class="card-b">
+            <div class="donut-c">
+              <div class="donut-w">
+                <svg class="donut-svg" width="100" height="100" viewBox="0 0 90 90">
+                  <circle class="d-bg" cx="45" cy="45" r="34"/>
+                  <circle class="d-fill" id="dFill" cx="45" cy="45" r="34" stroke="var(--acc)" stroke-dasharray="214" stroke-dashoffset="214"/>
+                </svg>
+                <div class="d-in"><div class="d-pct" id="dPct">--%</div><div class="d-lbl">إنتاجية</div></div>
+              </div>
+              <div class="breakdown">
+                <div class="bd"><div class="bd-dot" style="background:var(--acc)"></div><div class="bd-lbl">وقت العمل الفعلي</div><div class="bd-val" id="bdA">--</div></div>
+                <div class="bd"><div class="bd-dot" style="background:var(--yellow)"></div><div class="bd-lbl">فترات الراحة</div><div class="bd-val" id="bdI">--</div></div>
+                <div class="bd"><div class="bd-dot" style="background:var(--purple)"></div><div class="bd-lbl">استخدام AI</div><div class="bd-val" id="bdAI">--</div></div>
+                <div class="bd"><div class="bd-dot" style="background:var(--green)"></div><div class="bd-lbl">إجمالي التاسكات</div><div class="bd-val" id="bdC">--</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- alerts + energy + timeline -->
+      <div class="g3">
+        <div class="card">
+          <div class="card-h"><div><div class="card-t">التنبيهات</div><div class="card-s">تحليل الأداء</div></div></div>
+          <div class="card-b"><div id="alertList"></div></div>
+        </div>
+        <div class="card">
+          <div class="card-h"><div><div class="card-t">منحنى النشاط</div><div class="card-s">الإنتاجية بالساعة</div></div><span class="chip cn" id="peakChip">ذروة: --</span></div>
+          <div class="card-b">
+            <div class="energy" id="energyChart"></div>
+            <div style="display:flex;justify-content:space-between;margin-top:6px"><span style="font-size:10px;color:var(--text3)">07:00</span><span style="font-size:10px;color:var(--text3)">17:00</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-h"><div><div class="card-t">سجل النشاط</div><div class="card-s">آخر الأحداث</div></div></div>
+          <div class="card-b" style="padding:14px 20px"><div class="tl" id="timeline"></div></div>
+        </div>
+      </div>
+
+      <!-- AI analysis -->
+      <div class="card">
+        <div class="card-h"><div><div class="card-t">تحليل الذكاء الاصطناعي</div></div></div>
+        <div class="card-b"><div id="aiList"></div></div>
+      </div>
+
+    </div><!-- /page-tracking -->
+
+    <!-- ====== EMPLOYEE DASHBOARD ====== -->
+    <div class="page" id="page-dashboard">
+      <div class="back-btn" onclick="showEmployees()">← العودة للقائمة</div>
+      <div class="emp-banner">
+        <div class="eb-av" id="ebAv"></div>
+        <div>
+          <div class="eb-name" id="ebName"></div>
+          <div class="eb-dept" id="ebDept"></div>
+        </div>
+        <div class="eb-kpis" id="ebKpis"></div>
+      </div>
+      <div class="tab-nav">
+        <div class="tab-btn active" id="tbtn-monthly" onclick="showTab('monthly')">التقرير الشهري</div>
+        <div class="tab-btn" id="tbtn-annual" onclick="showTab('annual')">التقرير السنوي</div>
+      </div>
+
+      <!-- MONTHLY -->
+      <div id="tab-monthly" style="display:block">
+        <div class="kpi-row" id="monthKpis"></div>
+        <div class="card">
+          <div class="card-h"><div><div class="card-t">الإنتاجية اليومية — الشهر كامل</div><div class="card-s">كل شريط = يوم عمل</div></div></div>
+          <div class="card-b">
+            <div class="month-bars" id="monthBars"></div>
+            <div style="display:flex;justify-content:space-between;margin-top:6px"><span style="font-size:10px;color:var(--text3)">اليوم الأول</span><span style="font-size:10px;color:var(--text3)">اليوم الأخير</span></div>
+            <div style="display:flex;align-items:center;gap:14px;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
+              <div style="display:flex;align-items:center;gap:6px"><div style="width:8px;height:8px;border-radius:2px;background:var(--green)"></div><span style="font-size:11px;color:var(--text2)">ممتاز ≥70%</span></div>
+              <div style="display:flex;align-items:center;gap:6px"><div style="width:8px;height:8px;border-radius:2px;background:var(--acc)"></div><span style="font-size:11px;color:var(--text2)">جيد 50-70%</span></div>
+              <div style="display:flex;align-items:center;gap:6px"><div style="width:8px;height:8px;border-radius:2px;background:var(--yellow)"></div><span style="font-size:11px;color:var(--text2)">مقبول &lt;50%</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="g2b">
+          <div class="card" style="margin-bottom:0"><div class="card-h"><div><div class="card-t">أداء الأسابيع</div></div></div><div class="card-b"><div id="weekCompare"></div></div></div>
+          <div class="card" style="margin-bottom:0"><div class="card-h"><div><div class="card-t">توزيع المهام</div></div></div><div class="card-b"><div id="monthTaskDist"></div></div></div>
+        </div>
+      </div>
+
+      <!-- ANNUAL -->
+      <div id="tab-annual" style="display:none">
+        <div class="kpi-row" id="annualKpis"></div>
+        <div class="card">
+          <div class="card-h"><div><div class="card-t">الأداء الشهري — العام كامل</div><div class="card-s">12 شهر</div></div></div>
+          <div class="card-b">
+            <div class="monthly-trend" id="annualChart"></div>
+            <div style="display:flex;justify-content:space-between;margin-top:6px"><span style="font-size:10px;color:var(--text3)">يناير</span><span style="font-size:10px;color:var(--text3)">ديسمبر</span></div>
+          </div>
+        </div>
+        <div class="q-grid" id="quarterGrid"></div>
+      </div>
+    </div><!-- /page-dashboard -->
+
+  </div>
+</div>
+</div>
+
+<script>
+const API='';
+const EMPLOYEES=[
+  {id:'emp001',name:'أرينا المشعلي',initials:'أ',role:'محللة بيانات',dept:'قسم التخطيط الاستراتيجي',color:'linear-gradient(135deg,#1f4e8c,#388bfd)',
+   monthly:{tasks:127,avgProd:78,days:22,aiSessions:89},annual:{tasks:1480,avgProd:76,bestMonth:'أكتوبر',totalAI:1240}},
+  {id:'emp002',name:'احمد الشهراني',initials:'م',role:'محللة بيانات',dept:'قسم التخطيط الاستراتيجي',color:'linear-gradient(135deg,#0d3320,#196c2e)',
+   monthly:{tasks:112,avgProd:74,days:22,aiSessions:76},annual:{tasks:1320,avgProd:72,bestMonth:'سبتمبر',totalAI:980}},
+  {id:'emp003',name:'سارة الدوسري',initials:'س',role:'مديرة مشاريع',dept:'قسم إدارة المشاريع الرقمية',color:'linear-gradient(135deg,#2d1a5c,#6e40c9)',
+   monthly:{tasks:165,avgProd:88,days:22,aiSessions:118},annual:{tasks:1890,avgProd:86,bestMonth:'نوفمبر',totalAI:1680}},
+  {id:'emp004',name:'خالد الشهري',initials:'خ',role:'محلل أمن معلومات',dept:'قسم الأمن السيبراني',color:'linear-gradient(135deg,#3d2a00,#9e6a03)',
+   monthly:{tasks:78,avgProd:58,days:21,aiSessions:38},annual:{tasks:890,avgProd:57,bestMonth:'مارس',totalAI:520}},
+  {id:'emp005',name:'نورة القحطاني',initials:'ن',role:'مصممة UX/UI',dept:'قسم تجربة المستخدم',color:'linear-gradient(135deg,#1a3a5c,#1f6feb)',
+   monthly:{tasks:112,avgProd:72,days:22,aiSessions:95},annual:{tasks:1290,avgProd:70,bestMonth:'سبتمبر',totalAI:1340}},
+  {id:'emp006',name:'عبدالله الحربي',initials:'ع',role:'مطور ويب',dept:'قسم تطوير المنصات الرقمية',color:'linear-gradient(135deg,#0a2540,#0c4a6e)',
+   monthly:{tasks:61,avgProd:46,days:20,aiSessions:22},annual:{tasks:710,avgProd:45,bestMonth:'ديسمبر',totalAI:290}}
+];
+
+let currentEmp=null;
+
+function clearAllNav(){
+  ['nav-employees','nav-tracking','nav-monthly','nav-annual'].forEach(id=>{
+    document.getElementById(id)?.classList.remove('active');
+  });
+  ['page-employees','page-tracking','page-dashboard'].forEach(id=>{
+    document.getElementById(id)?.classList.remove('active');
+  });
+  document.getElementById('nav-emp-group').style.display='none';
+}
+
+function showEmployees(){
+  clearAllNav();
+  currentEmp=null;
+  document.getElementById('page-employees').classList.add('active');
+  document.getElementById('nav-employees').classList.add('active');
+  sv('crumbAct','قائمة الموظفين');
+  sv('pgTitle','لوحة متابعة الفريق');
+}
+
+function renderEmployeeGrid(){
+  document.getElementById('empGrid').innerHTML=EMPLOYEES.map(e=>`
+    <div class="emp-card" onclick="openEmployee('${e.id}')">
+      <div class="ec-av" style="background:${e.color}">${e.initials}</div>
+      <div class="ec-name">${e.name}</div>
+      <div class="ec-role">${e.role}</div>
+      <div class="ec-dept">${e.dept}</div>
+      <div class="ec-foot">
+        <span style="font-size:11px;color:var(--text3);font-weight:600">موظفة</span>
+        <span class="btn-view">عرض التقارير ←</span>
+      </div>
+    </div>`).join('');
+}
+
+function showTracking(){
+  clearAllNav();
+  document.getElementById('page-tracking').classList.add('active');
+  document.getElementById('nav-tracking').classList.add('active');
+  sv('crumbAct','تتبّعي');
+  sv('pgTitle','أرينا المشعلي — المتابعة اليومية');
+  fetchToday();
+}
+
+async function fetchToday(){
+  try{
+    const r=await fetch(API+'/api/today');
+    const d=await r.json();
+    renderTodayData(d);
+  }catch(e){
+    renderDailyOffline();
+  }
+}
+
+function renderDailyOffline(){
+  document.getElementById('trkKpis').innerHTML=kpiEmpty();
+  sv('dPct','--'); ['bdA','bdI','bdAI','bdC'].forEach(id=>sv(id,'--')); sv('tChip','—');
+  ['trk-prod','trk-tasks','trk-cells','trk-ai','trk-saves'].forEach(id=>sv(id,'--'));
+  document.getElementById('taskList').innerHTML='<div class="empty">شغّل agent.py أولاً</div>';
+  document.getElementById('alertList').innerHTML='<div class="alert-row info"><div class="alert-ico">ℹ️</div><div><div class="alert-t">Agent غير متصل</div><div class="alert-m">شغّل agent.py لبدء الرصد</div></div></div>';
+  document.getElementById('energyChart').innerHTML='<div class="empty" style="width:100%">—</div>';
+  document.getElementById('timeline').innerHTML='<div class="empty">—</div>';
+  document.getElementById('aiList').innerHTML='<div class="empty">لم يُرصد استخدام AI</div>';
+}
+
+function kpiEmpty(){
+  return ['التاسكات المنجزة','الإنتاجية الفعلية','الخانات المضافة'].map(l=>`
+    <div class="kpi"><div class="kpi-top"><div class="kpi-lbl">${l}</div><div class="kpi-ico">—</div></div>
+    <div class="kpi-val" style="color:var(--text3)">—</div><div class="kpi-sub">في انتظار البيانات</div>
+    <div class="kpi-bar"><div class="kpi-bf" style="width:0%"></div></div></div>`).join('');
+}
+
+function renderTodayData(d){
+  const prod=d.productivity||0;
+  const tasks=d.tasks||[];
+  const alerts=d.alerts||[];
+  const tl=d.timeline||[];
+  const energy=d.energy_curve||[];
+  const aiList=d.ai_analysis||[];
+  const activeM=d.active_minutes||0;
+  const idleM=d.idle_minutes||0;
+  const aiM=d.total_ai_minutes||0;
+  const totalCells=d.total_cells_added||0;
+  const done=tasks.filter(t=>t.status?.includes('مكتمل'));
+  const current=tasks.find(t=>t.status?.includes('جاري'));
+  const totalSaves=tasks.reduce((x,t)=>x+(t.saves||0),0);
+
+  // banner
+  const pc=prod>=70?'var(--green)':prod>=50?'var(--acc)':'var(--yellow)';
+  sv('trk-prod',prod+'%'); document.getElementById('trk-prod').style.color=pc;
+  sv('trk-tasks',done.length);
+  sv('trk-cells',totalCells);
+  sv('trk-ai',aiM+'د');
+  sv('trk-saves',totalSaves);
+
+  // kpis
+  document.getElementById('trkKpis').innerHTML=`
+    <div class="kpi"><div class="kpi-top"><div class="kpi-lbl">التاسكات المنجزة</div><div class="kpi-ico">✅</div></div><div class="kpi-val" style="color:var(--green)">${done.length}</div><div class="kpi-sub">مهمة منجزة اليوم</div><div class="kpi-bar"><div class="kpi-bf" style="background:var(--green);width:${Math.min(done.length*14,100)}%"></div></div></div>
+    <div class="kpi"><div class="kpi-top"><div class="kpi-lbl">الإنتاجية الفعلية</div><div class="kpi-ico">📊</div></div><div class="kpi-val" style="color:${pc}">${prod}%</div><div class="kpi-sub">${prod>=70?'أداء ممتاز':prod>=50?'أداء متوسط':'يحتاج تحسين'}</div><div class="kpi-bar"><div class="kpi-bf" style="background:${pc};width:${prod}%"></div></div></div>
+    <div class="kpi"><div class="kpi-top"><div class="kpi-lbl">الخانات المضافة</div><div class="kpi-ico">📝</div></div><div class="kpi-val">${totalCells}</div><div class="kpi-sub">خانة جديدة اليوم</div><div class="kpi-bar"><div class="kpi-bf" style="background:var(--text2);width:${Math.min(totalCells/3,100)}%"></div></div></div>`;
+
+  // donut
+  const circ=214;
+  document.getElementById('dFill').style.strokeDashoffset=circ-(prod/100)*circ;
+  sv('dPct',prod+'%'); sv('bdA',activeM+'د'); sv('bdI',idleM+'د'); sv('bdAI',aiM+'د'); sv('bdC',done.length+' مهمة');
+
+  // ===== بوكس المهام الموحّد =====
+  sv('tChip', done.length + ' منجزة');
+  const chipActive = document.getElementById('chipActive');
+
+  if(!done.length && !current){
+    chipActive.style.display='none';
+    document.getElementById('taskList').innerHTML='<div class="empty">لم يُسجَّل إنجاز بعد</div>';
+  } else {
+    // أظهر badge "جاري" فقط لو في مهمة حالية
+    chipActive.style.display = current ? 'inline-flex' : 'none';
+
+    let h='';
+
+    // المهمة الجارية أولاً — badge برتقالي
+    if(current){
+      h+=`
+      <div class="task-row">
+        <div class="tnum prog">●</div>
+        <div class="task-b">
+          <div class="task-name">${current.name}</div>
+          <div class="task-meta">
+            <span class="tm">${current.start||''}</span>
+            <span class="tsep">·</span>
+            <span class="chip co" style="font-size:8px">+${current.cells_added||0} خانة</span>
+            <span class="chip co" style="font-size:8px">${current.saves||0} حفظة</span>
+          </div>
+        </div>
+        <div class="task-r">
+          <span class="status-badge status-active">● جاري</span>
+        </div>
+      </div>`;
+    }
+
+    // المهام المنجزة — badge أخضر
+    [...done].reverse().forEach((t,i)=>{
+      const cells=t.cells_added||0;
+      h+=`
+      <div class="task-row">
+        <div class="tnum done">${done.length-i}</div>
+        <div class="task-b">
+          <div class="task-name">${t.name}</div>
+          <div class="task-meta">
+            <span class="tm">${t.duration||''}</span>
+            <span class="tsep">·</span>
+            <span class="chip cg" style="font-size:8px">+${cells} خانة</span>
+            ${t.ai_verdict?`<span class="chip cp" style="font-size:8px">${t.ai_verdict.level||''}</span>`:''}
+          </div>
+        </div>
+        <div class="task-r">
+          <span class="status-badge status-done">✓ أتممها</span>
+          <span class="task-time">${t.start||''}</span>
+          <span class="task-dur">${t.end||''}</span>
+        </div>
+      </div>`;
+    });
+
+    document.getElementById('taskList').innerHTML=h;
+  }
+
+  // alerts
+  if(!alerts.length){
+    document.getElementById('alertList').innerHTML='<div class="alert-row success"><div class="alert-ico">✅</div><div><div class="alert-t">لا توجد تنبيهات</div><div class="alert-m">الأداء ضمن المعدل الطبيعي</div></div></div>';
+  } else {
+    document.getElementById('alertList').innerHTML=alerts.map(a=>`<div class="alert-row ${a.type}"><div class="alert-ico">${a.icon}</div><div><div class="alert-t">${a.title}</div><div class="alert-m">${a.msg}</div></div></div>`).join('');
+  }
+
+  // energy
+  if(energy.length>1){
+    const maxP=Math.max(...energy.map(e=>e.productivity),1);
+    const peak=energy.reduce((b,e)=>e.productivity>b.productivity?e:b);
+    sv('peakChip','ذروة: '+peak.hour);
+    document.getElementById('energyChart').innerHTML=energy.map(e=>{
+      const h=(e.productivity/maxP)*100, c=e.productivity>=70?'var(--green)':e.productivity>=50?'var(--acc)':'var(--yellow)';
+      return `<div class="en-col"><div class="en-bar" style="height:${h}%;background:${c};opacity:.7"></div><div class="en-lbl">${e.hour.split(':')[0]}</div></div>`;
+    }).join('');
+  }
+
+  // timeline
+  if(!tl.length){
+    document.getElementById('timeline').innerHTML='<div class="empty">في انتظار بيانات...</div>';
+  } else {
+    document.getElementById('timeline').innerHTML=[...tl].reverse().map((t,i,arr)=>`
+      <div class="tl-row"><div class="tl-l"><div class="tl-dot ${t.color==='green'?'tl-g':t.color==='purple'?'tl-p':t.color==='yellow'?'tl-y':'tl-n'}"></div>${i<arr.length-1?'<div class="tl-line"></div>':''}</div>
+      <div class="tl-b"><div class="tl-t">${t.icon||''} ${t.label}</div>${t.filled?`<div class="tl-s">${t.filled} خانة</div>`:''}<div class="tl-tm">${t.time}</div></div></div>`).join('');
+  }
+
+  // AI
+  if(!aiList.length){
+    document.getElementById('aiList').innerHTML='<div class="empty">لم يُرصد استخدام AI</div>';
+  } else {
+    const maxM=Math.max(...aiList.map(a=>a.minutes||0),1);
+    document.getElementById('aiList').innerHTML=aiList.map(a=>`<div class="ai-row"><div class="ai-tool">${a.tool}</div><div class="ai-bw"><div class="ai-bf" style="width:${(a.minutes/maxM)*100}%;background:${a.productive?'var(--green)':'var(--yellow)'}"></div></div><div class="ai-min">${a.minutes}د</div><span class="chip ${a.productive?'cg':'cy'}">${a.verdict}</span></div>`).join('');
+  }
+
+  sv('lastUpdTime', d.last_update||new Date().toLocaleTimeString('ar-SA',{hour:'2-digit',minute:'2-digit'}));
+  sv('lastUpd', new Date().toLocaleTimeString('ar-SA',{hour:'2-digit',minute:'2-digit'}));
+}
+
+function openEmployee(id){
+  currentEmp=EMPLOYEES.find(e=>e.id===id);
+  if(!currentEmp) return;
+  clearAllNav();
+  document.getElementById('nav-emp-group').style.display='';
+  document.getElementById('nav-emp-label').textContent=currentEmp.name;
+  document.getElementById('ebAv').style.background=currentEmp.color;
+  document.getElementById('ebAv').textContent=currentEmp.initials;
+  document.getElementById('ebName').textContent=currentEmp.name;
+  document.getElementById('ebDept').textContent=currentEmp.role+' · '+currentEmp.dept;
+  const m=currentEmp.monthly;
+  const c=m.avgProd>=70?'var(--green)':m.avgProd>=50?'var(--acc)':'var(--yellow)';
+  document.getElementById('ebKpis').innerHTML=`
+    <div class="eb-kpi"><div class="eb-kv" style="color:${c}">${m.avgProd}%</div><div class="eb-kl">إنتاجية</div></div>
+    <div class="eb-kpi"><div class="eb-kv" style="color:var(--green)">${m.tasks}</div><div class="eb-kl">تاسكات</div></div>
+    <div class="eb-kpi"><div class="eb-kv" style="color:var(--purple)">${m.aiSessions}</div><div class="eb-kl">جلسات AI</div></div>`;
+  document.getElementById('page-dashboard').classList.add('active');
+  showTab('monthly');
+}
+
+function showTab(tab){
+  ['monthly','annual'].forEach(t=>{
+    document.getElementById('tab-'+t).style.display=t===tab?'block':'none';
+    document.getElementById('tbtn-'+t).classList.toggle('active',t===tab);
+    document.getElementById('nav-'+t)?.classList.toggle('active',t===tab);
+  });
+  const lbl={monthly:'التقرير الشهري',annual:'التقرير السنوي'};
+  sv('crumbAct',(currentEmp?.name||'')+' › '+lbl[tab]);
+  sv('pgTitle',(currentEmp?.name||'')+' — '+lbl[tab]);
+  if(tab==='monthly') renderMonthly();
+  if(tab==='annual') renderAnnual();
+}
+
+function renderMonthly(){
+  if(!currentEmp) return;
+  const m=currentEmp.monthly, prod=m.avgProd;
+  const c=prod>=70?'var(--green)':prod>=50?'var(--acc)':'var(--yellow)';
+  document.getElementById('monthKpis').innerHTML=`
+    <div class="kpi"><div class="kpi-top"><div class="kpi-lbl">إجمالي التاسكات</div><div class="kpi-ico">✅</div></div><div class="kpi-val" style="color:var(--green)">${m.tasks}</div><div class="kpi-sub">هذا الشهر · ${m.days} يوم عمل</div><div class="kpi-bar"><div class="kpi-bf" style="background:var(--green);width:${Math.min(m.tasks/2,100)}%"></div></div></div>
+    <div class="kpi"><div class="kpi-top"><div class="kpi-lbl">متوسط الإنتاجية</div><div class="kpi-ico">📊</div></div><div class="kpi-val" style="color:${c}">${prod}%</div><div class="kpi-sub">${prod>=70?'أداء ممتاز':prod>=50?'أداء جيد':'يحتاج تحسين'}</div><div class="kpi-bar"><div class="kpi-bf" style="background:${c};width:${prod}%"></div></div></div>
+    <div class="kpi"><div class="kpi-top"><div class="kpi-lbl">جلسات AI</div><div class="kpi-ico">🤖</div></div><div class="kpi-val" style="color:var(--purple)">${m.aiSessions}</div><div class="kpi-sub">جلسة ذكاء اصطناعي</div><div class="kpi-bar"><div class="kpi-bf" style="background:var(--purple);width:${Math.min(m.aiSessions,100)}%"></div></div></div>`;
+  const days=genMonthData(m.days,prod), maxP=Math.max(...days,1);
+  document.getElementById('monthBars').innerHTML=days.map((p,i)=>{const col=p>=70?'var(--green)':p>=50?'var(--acc)':'var(--yellow)';return `<div class="mb" style="height:${(p/maxP)*100}%;background:${col}" title="يوم ${i+1}: ${p}%"></div>`;}).join('');
+  const weeks=[{w:'الأول',p:Math.round(prod*.88+rnd(10)),t:Math.round(m.tasks/4*.85)},{w:'الثاني',p:Math.round(prod*.94+rnd(8)),t:Math.round(m.tasks/4*.95)},{w:'الثالث',p:Math.round(prod+rnd(12)-5),t:Math.round(m.tasks/4)},{w:'الرابع',p:Math.round(prod*1.05+rnd(8)-4),t:Math.round(m.tasks/4*1.1)}];
+  document.getElementById('weekCompare').innerHTML=`<div style="display:flex;flex-direction:column;gap:10px">${weeks.map(w=>{const wc=w.p>=70?'var(--green)':w.p>=50?'var(--acc)':'var(--yellow)';return `<div style="display:flex;align-items:center;gap:10px"><div style="font-size:12px;color:var(--text2);width:80px;flex-shrink:0">الأسبوع ${w.w}</div><div style="flex:1;height:2px;background:var(--border2);border-radius:100px;overflow:hidden"><div style="height:100%;width:${w.p}%;background:${wc};border-radius:100px"></div></div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:${wc};width:40px;text-align:left">${w.p}%</div><span class="chip cn" style="font-size:8px">${w.t}م</span></div>`;}).join('')}</div>`;
+  document.getElementById('monthTaskDist').innerHTML=`<div class="breakdown"><div class="bd"><div class="bd-dot" style="background:var(--green)"></div><div class="bd-lbl">مكتملة بامتياز</div><div class="bd-val">${Math.round(m.tasks*.65)}</div></div><div class="bd"><div class="bd-dot" style="background:var(--acc)"></div><div class="bd-lbl">مكتملة</div><div class="bd-val">${Math.round(m.tasks*.25)}</div></div><div class="bd"><div class="bd-dot" style="background:var(--yellow)"></div><div class="bd-lbl">جزئية</div><div class="bd-val">${Math.round(m.tasks*.08)}</div></div><div class="bd"><div class="bd-dot" style="background:var(--red)"></div><div class="bd-lbl">متأخرة</div><div class="bd-val">${Math.round(m.tasks*.02)}</div></div></div>`;
+}
+
+function renderAnnual(){
+  if(!currentEmp) return;
+  const a=currentEmp.annual, prod=a.avgProd;
+  const mData=genAnnualData(prod);
+  const months=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+  const maxM=Math.max(...mData,1);
+  document.getElementById('annualKpis').innerHTML=`
+    <div class="kpi"><div class="kpi-top"><div class="kpi-lbl">إجمالي التاسكات</div><div class="kpi-ico">✅</div></div><div class="kpi-val" style="color:var(--green)">${a.tasks.toLocaleString()}</div><div class="kpi-sub">خلال العام كامل</div><div class="kpi-bar"><div class="kpi-bf" style="background:var(--green);width:${Math.min(a.tasks/20,100)}%"></div></div></div>
+    <div class="kpi"><div class="kpi-top"><div class="kpi-lbl">متوسط الإنتاجية</div><div class="kpi-ico">📊</div></div><div class="kpi-val" style="color:var(--acc)">${prod}%</div><div class="kpi-sub">إجمالي العام</div><div class="kpi-bar"><div class="kpi-bf" style="background:var(--acc);width:${prod}%"></div></div></div>
+    <div class="kpi"><div class="kpi-top"><div class="kpi-lbl">أفضل شهر</div><div class="kpi-ico">🏆</div></div><div class="kpi-val" style="font-size:15px;padding-top:3px;color:var(--yellow)">${a.bestMonth}</div><div class="kpi-sub">أعلى إنتاجية سنوية</div></div>`;
+  document.getElementById('annualChart').innerHTML=mData.map((p,i)=>{const col=p>=70?'var(--green)':p>=50?'var(--acc)':'var(--yellow)';return `<div class="mt-col"><div class="mt-bar" style="height:${(p/maxM)*100}%;background:${col}" title="${months[i]}: ${p}%"></div><div class="mt-lbl">${months[i].slice(0,3)}</div></div>`;}).join('');
+  const quarters=[{q:'الأول',r:'يناير-مارس',data:mData.slice(0,3)},{q:'الثاني',r:'أبريل-يونيو',data:mData.slice(3,6)},{q:'الثالث',r:'يوليو-سبتمبر',data:mData.slice(6,9)},{q:'الرابع',r:'أكتوبر-ديسمبر',data:mData.slice(9,12)}];
+  document.getElementById('quarterGrid').innerHTML=quarters.map(q=>{
+    const p=Math.round(q.data.reduce((x,v)=>x+v,0)/3), t=Math.round(a.tasks/4*(.85+Math.random()*.3));
+    const qc=p>=70?'var(--green)':p>=50?'var(--acc)':'var(--yellow)';
+    return `<div class="q-card"><div class="q-label">الربع ${q.q}</div><div class="q-val" style="color:${qc}">${p}%</div><div class="q-sub">${t} مهمة<br><span style="color:var(--text3)">${q.r}</span></div><div class="q-bar"><div class="q-bf" style="width:${p}%;background:${qc}"></div></div></div>`;
+  }).join('');
+}
+
+function rnd(n){return Math.round((Math.random()-.5)*n)}
+function genMonthData(days,avg){return Array.from({length:days},()=>Math.max(20,Math.min(100,avg+rnd(28))))}
+function genAnnualData(avg){return Array.from({length:12},(_,i)=>Math.max(25,Math.min(100,avg+Math.round(Math.sin(i/2)*12)+rnd(15))))}
+
+function sv(id,val){const el=document.getElementById(id);if(el)el.textContent=val}
+function updateClock(){
+  const now=new Date();
+  sv('clkT',now.toLocaleTimeString('ar-SA'));
+  sv('clkD',now.toLocaleDateString('ar-SA',{weekday:'long',month:'long',day:'numeric'}));
+  sv('govDate',now.toLocaleDateString('ar-SA',{weekday:'long',year:'numeric',month:'long',day:'numeric',calendar:'islamic'}));
+}
+
+updateClock();
+setInterval(updateClock,1000);
+renderEmployeeGrid();
+setInterval(()=>{
+  if(document.getElementById('page-tracking').classList.contains('active')) fetchToday();
+},30000);
+</script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+requests
+psutil
+openpyxl
+pyobjc-framework-Cocoa
+python-dotenv
